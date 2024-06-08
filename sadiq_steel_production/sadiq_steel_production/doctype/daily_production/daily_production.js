@@ -34,36 +34,17 @@ frappe.ui.form.on("Finish Items", {
     end_cutts: function (frm, cdt, cdn) {
         calculate_net_qty(frm, cdt, cdn);
         finish_items_totals(frm);
+    },
+    rate: function (frm, cdt, cdn) {
+        calculate_net_qty(frm, cdt, cdn);
+        finish_items_totals(frm);
+    },
+        finish_items_add: function (frm, cdt, cdn) {
+        frappe.model.set_value(cdt, cdn, 'rate', frm.fields_dict['raw_material_items'].grid.data[0].rate);
+        // END CUSTOM
     }
 });
-frappe.ui.form.on('Gas Meter Reading', {
-    previous_reading: function (frm, cdt, cdn) {
-        calculate_consumed_units(frm, cdt, cdn);
-    },
-    current_reading: function (frm, cdt, cdn) {
-        calculate_consumed_units(frm, cdt, cdn);
-    }
-});
-frappe.ui.form.on('Furnace Fuel Consumption And Stock', {
-    on_time: function (frm, cdt, cdn) {
-        calculate_fuel_consumption(frm, cdt, cdn);
-    },
-    off_time: function (frm, cdt, cdn) {
-        calculate_fuel_consumption(frm, cdt, cdn);
-    },
-    previous_gauge_measure: function (frm, cdt, cdn) {
-        calculate_fuel_consumption(frm, cdt, cdn);
-    },
-    current_gauge_measure: function (frm, cdt, cdn) {
-        calculate_fuel_consumption(frm, cdt, cdn);
-    },
-    previous_stock: function (frm, cdt, cdn) {
-        calculate_fuel_consumption(frm, cdt, cdn);
-    },
-    current_stock: function (frm, cdt, cdn) {
-        calculate_fuel_consumption(frm, cdt, cdn);
-    }
-});
+
 
 function calculate_time_difference(frm) {
     if (frm.doc.mill_on_time && frm.doc.mill_off_time) {
@@ -117,43 +98,27 @@ function finish_items_totals(frm) {
     frm.doc.total_finish_ovals = 0;
     frm.doc.total_finish_end_cutts = 0;
     frm.doc.total_finish_net_qty = 0;
+    frm.doc.total_amount = 0;
 
     for (var i in finish_items) {
         frm.doc.total_finish_qty += finish_items[i].qty || 0;
         frm.doc.total_finish_ovals += finish_items[i].ovals || 0;
         frm.doc.total_finish_end_cutts += finish_items[i].end_cutts || 0;
         frm.doc.total_finish_net_qty += finish_items[i].net_qty || 0;
+        frm.doc.total_amount += finish_items[i].amount || 0;
     }
 
     frm.refresh_field("total_finish_qty");
     frm.refresh_field("total_finish_ovals");
     frm.refresh_field("total_finish_end_cutts");
     frm.refresh_field("total_finish_net_qty");
+    frm.refresh_field("total_amount");
 }
 
 function calculate_net_qty(frm, cdt, cdn) {
     var d = locals[cdt][cdn];
     var net_qty = flt(d.qty) - (flt(d.ovals || 0) + flt(d.end_cutts || 0));
     frappe.model.set_value(d.doctype, d.name, "net_qty", net_qty || 0);
+    frappe.model.set_value(d.doctype, d.name, "amount", net_qty * flt(d.rate) || 0);
 }
 
-function calculate_consumed_units(frm, cdt, cdn) {
-    var d = locals[cdt][cdn];
-    var consumed_units = flt(d.current_reading || 0) - (flt(d.previous_reading) || 0);
-    frappe.model.set_value(d.doctype, d.name, "consumed_units", consumed_units || 0);
-}
-
-function calculate_fuel_consumption(frm, cdt, cdn) {
-    var d = locals[cdt][cdn];
-    if (d.on_time && d.off_time) {
-        const OnTime = moment(d.on_time, "HH:mm:ss A");
-        const OffTime = moment(d.off_time, "HH:mm:ss A");
-        const duration = moment.duration(OffTime.diff(OnTime));
-        const hours = duration.asHours();
-        frappe.model.set_value(d.doctype, d.name, 'net_run_time', hours);
-    }
-    var fuel_consumption = flt(d.previous_gauge_measure || 0) - flt(d.current_gauge_measure || 0);
-    frappe.model.set_value(d.doctype, d.name, "fuel_consumption", fuel_consumption || 0);
-    var production = flt(d.current_stock || 0) - flt(d.previous_stock || 0);
-    frappe.model.set_value(d.doctype, d.name, "production", production || 0);
-}

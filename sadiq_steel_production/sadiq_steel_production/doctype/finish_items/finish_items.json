@@ -13,7 +13,9 @@
   "uom",
   "ovals",
   "end_cutts",
-  "net_qty"
+  "net_qty",
+  "rate",
+  "amount"
  ],
  "fields": [
   {
@@ -65,12 +67,24 @@
    "in_list_view": 1,
    "label": "Net Qty",
    "read_only": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate"
+  },
+  {
+   "default": "0",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-30 17:27:53.338017",
+ "modified": "2024-06-07 17:11:32.727323",
  "modified_by": "Administrator",
  "module": "Sadiq Steel Production",
  "name": "Finish Items",
