@@ -25,7 +25,7 @@ class DailyProduction(Document):
         for item in self.finish_items:
             it = doc.append("items", {})
             it.set_basic_rate_manually = 1
-            it.t_warehouse = self.warehouse
+            it.t_warehouse = item.warehouse
             it.item_code = item.item_code
             it.qty = item.net_qty
             it.valuation_rate = item.rate
