@@ -1,5 +1,14 @@
 frappe.ui.form.on('Daily Production', {
     refresh(frm) {
+        frm.set_query('batch', 'raw_material_items', function (doc, cdt, cdn) {
+            var d = locals[cdt][cdn];
+            return {
+                filters: [
+                    ["Batch", "item", "=", d.item_code],
+                    ["Batch", "batch_qty", ">", 0]
+                ]
+            };
+        });
         calculate_time_difference(frm);
     }, mill_on_time: function (frm) {
         calculate_time_difference(frm);
@@ -39,7 +48,7 @@ frappe.ui.form.on("Finish Items", {
         calculate_net_qty(frm, cdt, cdn);
         finish_items_totals(frm);
     },
-        finish_items_add: function (frm, cdt, cdn) {
+    finish_items_add: function (frm, cdt, cdn) {
         frappe.model.set_value(cdt, cdn, 'rate', frm.fields_dict['raw_material_items'].grid.data[0].rate);
         // END CUSTOM
     }

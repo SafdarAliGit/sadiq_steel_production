@@ -14,7 +14,9 @@
   "wastage_weight",
   "net_weight",
   "rate",
-  "amount"
+  "amount",
+  "batch",
+  "batch_qty"
  ],
  "fields": [
   {
@@ -78,12 +80,26 @@
    "in_list_view": 1,
    "label": "Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "batch",
+   "fieldtype": "Link",
+   "label": "Batch",
+   "options": "Batch"
+  },
+  {
+   "default": "0",
+   "fetch_from": "batch.batch_qty",
+   "fieldname": "batch_qty",
+   "fieldtype": "Data",
+   "label": "Batch Qty",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-05-30 17:28:17.626738",
+ "modified": "2024-06-22 16:59:36.448522",
  "modified_by": "Administrator",
  "module": "Sadiq Steel Production",
  "name": "Raw Material Items",
